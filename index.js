@@ -1,7 +1,7 @@
 const mineflayer = require('mineflayer');
 const express = require('express');
 
-const SERVER_HOST = 'ourserver-5LOn.aternos.me';
+const SERVER_HOST = 'MCZonee.aternos.me';
 const SERVER_PORT = 41445;
 const MINECRAFT_VERSION = '1.21.7';
 
