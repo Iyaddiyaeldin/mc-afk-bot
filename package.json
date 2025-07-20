@@ -1,18 +1,14 @@
 {
-  "name": "java-afk-bot",
+  "name": "minecraft-bot",
   "version": "1.0.0",
-  "description": "AFK bot for Minecraft Java servers using Mineflayer",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "mineflayer": "^4.16.1"
-  },
-  "engines": {
-    "node": ">=16.0.0"
-  },
-  "keywords": ["minecraft", "bot", "afk", "mineflayer", "java"],
-  "author": "iyadd",
-  "license": "MIT"
+    "mineflayer": "^4.11.0",
+    "mineflayer-pathfinder": "^2.5.1",
+    "minecraft-data": "^3.4.0",
+    "minecraft-protocol": "^1.37.0"
+  }
 }
