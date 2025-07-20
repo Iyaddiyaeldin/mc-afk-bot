@@ -12,7 +12,7 @@ let bot;
 function randomUsername() {
   const prefix = NAME_PREFIXES[Math.floor(Math.random() * NAME_PREFIXES.length)];
   const suffix = Math.floor(Math.random() * 10000);
-  return ${prefix}${suffix};
+  return `${prefix}${suffix}`;
 }
 
 function createBot() {
