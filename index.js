@@ -1,74 +1,50 @@
+// index.js
 const mineflayer = require('mineflayer');
-const express = require('express');
+const { pathfinder, Movements, goals } = require('mineflayer-pathfinder');
+const { GoalNear } = goals;
+const mc = require('minecraft-protocol');
 
-const SERVER_HOST = 'MCZonee.aternos.me';
-const SERVER_PORT = 41445;
-const MINECRAFT_VERSION = '1.21.7';
+const bot = mineflayer.createBot({
+  host: 'ourserver-5LOn.aternos.me',
+  port: 25565,
+  username: 'BotHelper123', // يمكن تغييره إذا لزم
+  auth: 'microsoft', // استعمل 'offline' إذا لم يكن بحساب مايكروسوفت
+});
 
-const NAME_PREFIXES = ['AFKBott', 'LazyJump', 'SkyWalker', 'CloudHop', 'BotNomad'];
+bot.loadPlugin(pathfinder);
 
-let bot;
+bot.once('spawn', () => {
+  console.log('البوت دخل السيرفر.');
+  bot.chat('مرحباً! أنا بوت');
+  bot.setControlState('jump', true);
+  setTimeout(() => bot.setControlState('jump', false), 2000);
+});
 
-function randomUsername() {
-  const prefix = NAME_PREFIXES[Math.floor(Math.random() * NAME_PREFIXES.length)];
-  const suffix = Math.floor(Math.random() * 10000);
-  return ${prefix}${suffix};
+bot.on('chat', (username, message) => {
+  if (username === bot.username) return;
+  if (message === 'تعال') {
+    const mcData = require('minecraft-data')(bot.version);
+    const defaultMove = new Movements(bot, mcData);
+    bot.pathfinder.setMovements(defaultMove);
+    bot.pathfinder.setGoal(new GoalNear(bot.entity.position.x + 1, bot.entity.position.y, bot.entity.position.z, 1));
+  }
+});
+
+bot.on('end', () => {
+  console.log('تم طرد البوت، يحاول إعادة الاتصال...');
+  setTimeout(reconnect, 5000);
+});
+
+bot.on('error', err => console.log('خطأ:', err));
+
+function reconnect() {
+  const newBot = require('child_process').spawn('node', ['index.js'], {
+    stdio: 'inherit'
+  });
 }
 
-function createBot() {
-  const username = randomUsername();
-  console.log(▶️ Connecting as ${username}...);
-
-  bot = mineflayer.createBot({
-    host: SERVER_HOST,
-    port: SERVER_PORT,
-    username,
-    version: MINECRAFT_VERSION,
-    // offlineMode: true, // أزل التعليق إذا كان السيرفر غير رسمي
-  });
-
-  bot.once('spawn', () => {
-    console.log('✅ Spawned in world!');
-
-    // القفز كل 10–15 ثانية
-    setInterval(() => {
-      if (bot.entity && bot.entity.onGround) {
-        bot.setControlState('jump', true);
-        setTimeout(() => bot.setControlState('jump', false), 500);
-      }
-    }, 10000 + Math.random() * 5000);
-
-    // إرسال رسالة في الشات كل دقيقة
-    setInterval(() => {
-      const msgs = [
-        'Hello world!',
-        'Just hopping around 🐇',
-        'AFK but still here!',
-        'Keep calm and mine on ⛏️',
-        'I like to jump!',
-      ];
-      bot.chat(msgs[Math.floor(Math.random() * msgs.length)]);
-    }, 60000);
-  });
-
-  // إعادة الاتصال دائمًا بعد فصل أو خطأ أو طرد
-  const reconnectHandler = (err) => {
-    console.log('🔌 Disconnected or error:', err?.message || err);
-    setTimeout(() => {
-      console.log('🔁 Reconnecting...');
-      createBot();
-    }, 30000); // انتظر 30 ثانية قبل المحاولة
-  };
-
-  bot.on('end', reconnectHandler);
-  bot.on('error', reconnectHandler);
-  bot.on('kicked', reconnectHandler);
+function getUsernamePrefixSuffix(username) {
+  const prefix = '[Prefix]';
+  const suffix = '[Suffix]';
+  return `${prefix}${username}${suffix}`;
 }
-
-createBot();
-
-// خادم ويب بسيط لابقاء الريندر شغال
-const app = express();
-const PORT = process.env.PORT || 3000;
-app.get('/', (req, res) => res.send('🚀 Minecraft AFK Bot is running!'));
-app.listen(PORT, () => console.log(🌐 Server listening on port ${PORT}));
