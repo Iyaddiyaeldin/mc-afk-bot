@@ -24,13 +24,12 @@ function createBot() {
     port: SERVER_PORT,
     username,
     version: MINECRAFT_VERSION,
-    // offlineMode: true, // أزل التعليق إذا كان السيرفر غير رسمي
+    // offlineMode: true, // Uncomment if the server is not premium
   });
 
   bot.once('spawn', () => {
     console.log('✅ Spawned in world!');
 
-    // القفز كل 10–15 ثانية
     setInterval(() => {
       if (bot.entity && bot.entity.onGround) {
         bot.setControlState('jump', true);
@@ -38,7 +37,6 @@ function createBot() {
       }
     }, 10000 + Math.random() * 5000);
 
-    // إرسال رسالة في الشات كل دقيقة
     setInterval(() => {
       const msgs = [
         'Hello world!',
@@ -51,13 +49,12 @@ function createBot() {
     }, 60000);
   });
 
-  // إعادة الاتصال دائمًا بعد فصل أو خطأ أو طرد
   const reconnectHandler = (err) => {
     console.log('🔌 Disconnected or error:', err?.message || err);
     setTimeout(() => {
       console.log('🔁 Reconnecting...');
       createBot();
-    }, 30000); // انتظر 30 ثانية قبل المحاولة
+    }, 30000);
   };
 
   bot.on('end', reconnectHandler);
@@ -67,7 +64,6 @@ function createBot() {
 
 createBot();
 
-// خادم ويب بسيط لابقاء الريندر شغال
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.get('/', (req, res) => res.send('🚀 Minecraft AFK Bot is running!'));
