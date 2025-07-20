@@ -25,7 +25,7 @@ function createBot() {
     port: SERVER_PORT,
     username,
     offline: true,
-    version: '1.21.94'
+    version: '1.21.93'
   });
 
   client.on('join', () => {
