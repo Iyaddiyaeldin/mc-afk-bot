@@ -17,7 +17,7 @@ function randomUsername() {
 
 function createBot() {
   const username = randomUsername();
-  console.log(▶️ Connecting as ${username}...);
+  console.log(`▶️ Connecting as ${username}...`);
 
   bot = mineflayer.createBot({
     host: SERVER_HOST,
